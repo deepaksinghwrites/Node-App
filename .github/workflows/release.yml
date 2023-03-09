@@ -40,4 +40,6 @@ jobs:
       
       - name: Login to docker hub and push image to CR
         run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+      
+      - name: Push image to CR
         run: docker push $IMAGE_NAME
