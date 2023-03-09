@@ -9,7 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out the repository
       - uses: actions/checkout@v2
+
+      - name: Build the image
       - run: docker build . -t deepaksinghwrites/nest-app
       - run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
       - run: docker push deepaksinghwrites/nest-app
+
+      - name: Run Bridgecrew 
+        id: Bridgecrew
+        uses: bridgecrewio/bridgecrew-action@master 
+        env:
+          PRISMA_API_URL: https://api.prismacloud.io
+        with:
+          api-key: ${{ secrets.BC_API_KEY }}
