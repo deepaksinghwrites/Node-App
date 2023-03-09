@@ -16,7 +16,8 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
-        run: echo "::debug::$IMAGE_NAME"
+      
+      - run: echo "::debug::$IMAGE_NAME"
 
       - name: Build the image
         run: docker build -t deepaksinghwrites/nest-app
