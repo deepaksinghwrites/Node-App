@@ -1,23 +1,39 @@
-# this release workflow uses checkov github action 
+# this release workflow uses twistcli github action 
 name: Release
 
-on:
+on: 
   push:
     branches: [main]
 
+env:
+  IMAGE_NAME: ${{ github.repository }}:${{ github.sha }}
+  echo "${{IMAGE_NAME}}"
+
 jobs:
-  deploy:
+  build-and-scan:
+    name: Build and scan image
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - run: docker build . -t deepaksinghwrites/nest-app
-      - name: Run Checkov action
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        env:
-          PRISMA_API_URL: https://app.prismacloud.io
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Build the image
+        run: docker build -t deepaksinghwrites/nest-app
+
+      - name: Prisma Cloud image scan
+        id: scan
+        uses: PaloAltoNetworks/prisma-cloud-scan@v1
         with:
-          api-key: ${{ secrets.BC_API_KEY }}
-      - run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
-      - run: docker push deepaksinghwrites/nest-app
+          pcc_console_url: https://app.prismacloud.io
+          pcc_user: ${{ secrets.PCC_USER }}
+          pcc_pass: ${{ secrets.PCC_PASS }}
+          image_name: "deepaksinghwrites/nest-app"
+          #image_name: ${{ env.IMAGE_NAME }}
+
+      # (Optional) for compatibility with GitHub's code scanning alerts
+      - name: Upload SARIF file
+        if: ${{ always() }} # necessary if using failure thresholds in the image scan
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif_file }}
