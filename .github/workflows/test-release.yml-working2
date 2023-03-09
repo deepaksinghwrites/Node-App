@@ -1,0 +1,23 @@
+# this release workflow uses checkov github action 
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build . -t deepaksinghwrites/nest-app
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        env:
+          PRISMA_API_URL: https://app.prismacloud.io
+        with:
+          api-key: ${{ secrets.BC_API_KEY }}
+      - run: echo "${{secrets.DOCKER_PASSWORD}}" | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
+      - run: docker push deepaksinghwrites/nest-app
