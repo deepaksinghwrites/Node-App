@@ -7,7 +7,6 @@ on:
 
 env:
   IMAGE_NAME: ${{ github.repository }}:${{ github.sha }}
-  echo "${{IMAGE_NAME}}"
 
 jobs:
   build-and-scan:
@@ -17,6 +16,7 @@ jobs:
     steps:
       - name: Check out the repository
         uses: actions/checkout@v2
+        run: echo "::debug::$IMAGE_NAME"
 
       - name: Build the image
         run: docker build -t deepaksinghwrites/nest-app
