@@ -21,7 +21,7 @@ jobs:
         id: scan
         uses: PaloAltoNetworks/prisma-cloud-scan@v1
         with:
-          pcc_console_url: https://app.prismacloud.io
+          pcc_console_url: https://api.prismacloud.io
           pcc_user: ${{ secrets.PCC_USER }}
           pcc_pass: ${{ secrets.PCC_PASS }}
           image_name: deepaksinghwrites/nest-app
