@@ -6,7 +6,8 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: ${{ github.repository }}:${{ github.sha }}
+# IMAGE_NAME: ${{ github.repository }}:${{ github.sha }}
+  IMAGE_NAME: deepaksinghwrites/nest-app
 
 jobs:
   build-and-scan:
